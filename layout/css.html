@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+   *{
+       margin: 0
+   }
+   body{
+       padding-left: 100px
+   }
+   /* >>>>>>>高度固定的div在父元素中垂直居中情况 */ 
+   /* 方法一 position + margin */ 
+   .parent{
+       position: relative;
+       width: 500px;
+       height: 200px;
+       background: red;
+   }
+   .child{
+       position: absolute;
+       width: 50px;
+       height: 50px;
+       left: 0;
+       right: 0;
+       top: 0;
+       bottom: 0;
+       margin: auto auto;
+       background: yellow
+   }
+   /* 方法二 */
+    .child1{
+        position: absolute;
+       width: 50px;
+       height: 50px;
+       top: 50%;
+       left: 50%;
+       margin-top: -25px;
+       margin-left: -25px;
+       background: yellow
+    }
+
+    /* >>>>>>>高度不定（自适应）的div在父元素中垂直居中 */
+    /* 方法一 */
+    .child2{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);  
+        background: yellow;
+        word-break: break-all;
+    }
+    /* 方法二 */
+    .parent_{
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+        width: 500px;
+        height: 200px;
+        background: red;
+    }
+    .child3{
+        display: inline-block;
+        background: yellow;
+    }
+
+    /* 方法三：使用flex布局实现水平垂直居中 */
+    .fparent{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 500px;
+        height: 200px;
+        background: red;
+    }
+    .fchild{
+        background: yellow;
+    }
+
+    /* >>>>>>>图片水平居中 */
+    .container{
+        width: 500px;
+        height: 200px;
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+        background: #eee;
+    }
+    .container1 {
+        width: 500px;
+        height: 200px;
+        background: #eee;
+       
+    }
+    ._img1{
+        
+    }
+   
+    /* >>>>>>>多子列水平垂直居中 */
+    /* 方法一 */
+    .multi{
+        width: 500px;
+        height: 100px;
+        background: #eee;
+        text-align: center;
+    }
+    .multi span{
+        display: inline-block;  
+        margin: auto 10px;
+        color: #fff;
+        background: #000;
+        line-height: 20px;
+        position: relative;
+        top: 50%;
+        transform:  translateY(-50%)
+    }
+
+    /* 方法二 */
+    .multi—_f{
+        width: 500px;
+        height: 100px;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center
+    }
+    .multi—_f span{
+        color: #fff;
+        background: #000;
+        line-height: 20px;
+        margin: 0 10px;
+    }
+
+    /* >>>>>>>图片和文字水平垂直居中 */
+    /* 方法一 */
+    .pic_text{
+        width: 800px;
+        height: 200px;
+        background: #eee;
+        display: table-cell; 
+        text-align: center;
+        vertical-align: middle;
+    }
+    .pic_text img{
+        vertical-align: middle;
+    }
+    .pic_text span{
+        text-decoration: underline;
+        /* 这个地方加不加vertical-align，有问题，文字会偏移 */
+       vertical-align: middle  
+    }
+
+     /* 方法二：使用flex */
+     .pic_text_f{
+        width: 800px;
+        height: 200px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        background: #eee;
+    }
+
+    /* >>>>>>>圣杯布局 */
+    /* 方法一 */
+    .header0,.footer0{
+        height:40px;
+        width:100%;
+        background:#ccc;
+    }
+    .footer0{
+        clear:both;
+    }
+    .container0{
+        padding-left:200px;
+        padding-right:300px;
+    }
+    .container0 >div{
+        float:left;
+        position:relative;
+    }
+    .middle0{
+        width:100%;
+        background:yellow;
+    }
+    .left0{
+        width:200px;
+        background:pink;
+        margin-left:-100%;
+        right:200px;
+    }
+    .right0{
+        width:300px;
+        background:aqua;
+        margin-right:-300px;
+    }
+
+    /* 方法二 float+margin*/
+    .middle_1{
+        margin: 0 200px;
+    }
+    .left_1{
+        width:200px;
+        background:pink;
+        float: left; 
+    }
+    .right_1{
+        width:200px;
+        background:pink;
+        float: right; 
+    }
+
+    /*方案三 position + margin*/
+    .container__1{
+        position: relative;
+        overflow: hidden;
+    }
+    .middle__1{
+        margin: 0 200px
+    }
+    .left__1{
+        position: absolute;
+        background:pink;
+        width: 200px;
+        left: 0;
+        top: 0
+    }
+    .right__1{
+        position: absolute;
+        width: 200px;
+        background:pink;
+        right: 0;
+        top: 0
+    }
+
+    /* 方案四：flex布局 */
+    .container__f{
+        display: flex;
+    }
+    .middle__f{
+        flex-grow: 1;
+
+    }
+    .left__f, .right__f{
+        flex-basis: 200px;
+        background:pink;
+    }
+
+    /* >>>>>>>双飞翼布局 */
+    .main-wrap {        
+        float: left;       
+        width: 100%;   
+    }  
+    .sub {       
+        float: left;        
+        width: 190px;        
+        margin-left: -100%;
+        background: pink
+    }   
+    .extra {        
+        float: left;        
+        width: 230px;        
+        margin-left: -230px; 
+        background: pink
+    }
+    .main {    
+        margin: 0 230px 0 190px;
+    }
+
+    /* >>>>>>>两侧高度与中间一致 */
+    /* 方法一：table布局 */
+    .wrap{
+        display:table-row;
+    }
+    .rightz{
+        width: 200px;
+        display: table-cell;
+        background: #ccc
+    }
+    .middlez{
+        width: 200px;
+        display: table-cell;
+        background: #aaa
+    }
+
+    /* 方法二：极大指的负margin-bottom和padding-bottom */
+    ._wrap{
+        overflow: hidden;
+    }
+    ._rightz{
+        float: left;
+        background: pink
+    }
+    ._middlez{
+        float: left;
+        background: #eee
+    }
+    ._rightz, ._middlez{
+        padding-bottom: 500px;
+        margin-bottom: -500px;
+        width: 50%;
+         
+    }
+    
+    /* 方法三：使用flex */
+    ._fwrap{
+      display: flex;
+      align-items: stretch;
+    }
+    ._frightz{
+        background: pink
+    }
+    ._fmiddlez{
+        background: #eee
+    }
+    ._frightz, ._fmiddlez{
+       width: 50%;
+       /* flex:1 */
+    }
+</style>
+<body>
+    <!-- 实现水平垂直居中 -->
+    position + top + left + right + margin: auto auto
+   <div class="parent">
+       <div class="child"></div>
+   </div><br />
+
+   position + top + left + right + margin-left + margin-top(子宽高定)
+   <div class="parent">
+       <div class="child1"></div>
+   </div><br />
+
+   left + top + transform负
+   <div class="parent">
+       <div class="child2">1234567894444444444</div>
+   </div><br />
+
+   table-cell
+   <div class="parent_">
+       <div class="child3">123456789</div>
+   </div><br />
+
+   flex 
+   <div class="fparent">
+       <div class="fchild">123456789</div>
+   </div><br />
+
+   <!-- 不定高图片水平垂直居中 -->
+   直接使用table cell
+   <div class="container">
+       <img src="./$.jpg" class="_img" alt="" />
+   </div>
+   期待。。。。
+   <div class="container1">
+       <img src="./$.jpg" class="_img1" alt=""/>
+   </div>
+    使用div子元素不定宽高居中1
+   <div class="parent">
+       <img src="./$.jpg" class="child2" alt=""/>
+   </div>
+   使用div子元素不定宽高居中2
+   <div class="parent">
+       <img src="./$.jpg" class="child" style="width: auto; height: auto" alt=""/>
+   </div>
+
+   <!-- 多子列水平垂直居中 -->
+   使用 父亲设置text-align:center ——> 子设置inline-block ->水平居中
+   使用  子设置position:relative transform ->垂直居中
+   <div class="multi">
+       <span>1222</span>
+       <span>2</span>
+       <span>32</span>
+   </div>
+
+   使用flex
+   <div class="multi—_f">
+       <span>1222</span>
+       <span>2</span>
+       <span>32</span>
+   </div>
+
+   <!-- 图片和文字水平垂直居中 -->
+    <br />
+    设置img vertical-align:middle
+    <div class="pic_text">
+            <img src="./$.jpg" alt=""/>
+            <span>1222</span>
+            <span>2</span>
+            <img src="./$.jpg" alt=""/>
+            <span>32</span>
+    </div>
+
+    <br />
+    使用flex: align-items justify-content
+    <div class="pic_text_f">
+            <img src="./$.jpg" alt=""/>
+            <span>1222</span>
+            <span>2</span>
+            <img src="./$.jpg" alt=""/>
+            <span>32</span>
+    </div>
+
+
+
+
+    <!-- 左侧固定，右侧自适应 -->
+
+    <!-- 顶部，底部，两侧固定，中间自适应（圣杯布局） -->
+    <br />
+    圣杯布局1: 使用float，left: margin-left: -100%; right:margin-left: -300px让他们归于一行。容器设置padding,中间元素直接百分百即可
+    <div class="header0"></div>
+    <div class="container0">
+        <div class="middle0">中间部分</div>
+        <div class="left0">左边</div>
+        <div class="right0">右边</div>
+    </div>
+    <div class="footer0"></div>
+    
+    <br />
+    圣杯布局2：设置中间块margin，左右float即可
+    <div class="header0"></div>
+    <div class="container_1">
+        <div class="left_1">左边</div>
+        <div class="right_1">右边</div>
+        <div class="middle_1">中间部分</div>
+    </div>
+    <div class="footer0"></div>
+    
+    <br />
+    圣杯布局3：使用绝对定位，左右定位即可
+    <div class="header0"></div>
+    <div class="container__1">
+        <div class="left__1">左边</div>
+        <div class="middle__1">中间部分</div>
+        <div class="right__1">右边</div>
+    </div>
+    <div class="footer0"></div>
+
+    <br />
+    圣杯布局4：使用flex
+    <div class="header0"></div>
+    <div class="container__f">
+        <div class="left__f">左边</div>
+        <div class="middle__f">中间部分</div>
+        <div class="right__f">右边</div>
+    </div>
+    <div class="footer0"></div>
+
+    <br />
+    双飞翼布局：整体float
+     <!-- 顶部，底部，两侧固定，中间自适应（双飞翼布局） -->
+     <div class="header0"></div>
+     <div>
+        <div class="main-wrap">
+            <div class="main">main</div>
+        </div>
+        <div class="sub">left</div>        
+        <div class="extra">right</div>
+     </div>
+     <div class="footer0"></div>
+
+     <!-- 两侧高度与中间一致 -->
+     <br/>
+     table实现等高布局
+     <div class="wrap">
+         <div class="middlez">
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+         </div>
+         <div class="rightz">2</div>
+     </div>
+
+     <br/>
+     使用负margin
+     <div class="_wrap">
+         <div class="_middlez">
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+         </div>
+         <div class="_rightz">2</div>
+     </div>
+     <br />
+     使用flex
+     <div class="_fwrap">
+         <div class="_fmiddlez">
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+             <h2>1</h2>
+         </div>
+         <div class="_frightz">2</div>
+     </div>
+</body>
+</html>
