@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        1.清空canvas <br/>
+
+        再绘制每一帧动画之前，需要清空所有。清空所有最简单的做法就是clearRect()方法<br/>
+        
+        2.保存canvas状态<br/>
+        
+        如果在绘制的过程中会更改canvas的状态(颜色、移动了坐标原点等),又在绘制每一帧时都是原始状态的话，则最好保存下canvas的状态<br/>
+        
+        3.绘制动画图形<br/>
+        
+        这一步才是真正的绘制动画帧<br/>
+        
+       4. 恢复canvas状态<br/>
+        
+        如果你前面保存了canvas状态，则应该在绘制完成一帧之后恢复canvas状态<br/>
+
+        <canvas id="canvas" width="600" height="600" style='background:#000'> 你的浏览器不支持canvas,请升级你的浏览器</canvas>
+
+        <script>
+            init();
+
+            function init(){
+                let canvas = document.getElementById('canvas');
+                let ctx = canvas.getContext("2d");
+                 draw(ctx);
+            }
+
+            function draw(ctx){
+                requestAnimationFrame(function step(){
+                    ctx.clearRect(0, 0, 600, 600);
+                    drawDial(ctx); //绘制表盘
+                    drawAllHands(ctx); //绘制时分秒针
+                    requestAnimationFrame(step);
+                });
+            }
+            
+            // 绘制时分秒针
+            function drawAllHands(ctx){
+               let time = new Date();
+
+               let s = time.getSeconds();
+               let m = time.getMinutes();
+               let h = time.getHours();
+
+               let pi = Math.PI;
+               let secondAngle = pi / 180 * 6 * s;
+               let minuteAngle = pi / 180 * 6 * m + secondAngle / 60;
+               let hourAngle = pi / 180 * 30 * h + minuteAngle / 12; // ?
+                
+                drawHand(hourAngle, 160, 6, 'red', ctx);
+                drawHand(minuteAngle, 196, 4, 'yellow', ctx);
+                drawHand(secondAngle, 229, 2, '#fff', ctx);
+     
+            }
+            
+            // 分布绘制
+            function drawHand(angle, length, width, color, ctx){
+                ctx.save();
+                ctx.translate(300, 300);
+                ctx.rotate(- Math.PI / 2 + angle);
+                ctx.beginPath();
+                ctx.moveTo(-15, 0);
+                ctx.lineTo(length, 0);
+                ctx.lineWidth = width;
+                ctx.strokeStyle = color;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+                ctx.closePath();
+                ctx.restore();
+            }
+
+            // 绘制表盘
+            function drawDial(ctx){
+                let pi = Math.PI;
+
+                ctx.save();
+
+                ctx.translate(300, 300); // 坐标回到画布中心
+                ctx.beginPath();
+                ctx.arc(0, 0, 298, 0, 2 * pi)
+                ctx.stroke();
+                ctx.closePath();
+
+                for(var i = 0; i < 60; i++){
+                    ctx.save();
+                    ctx.rotate(-pi / 2 + i * pi / 30);  //【旋转坐标轴】 坐标轴x的正方形从 向上开始算起。  弧度angle=(Math.PI/180)*degrees； rotate(angle)
+                    ctx.beginPath();
+                    ctx.moveTo(250, 0);
+                    ctx.lineTo(290, 0);
+                    ctx.lineWidth = i % 5 ? 2 : 4;
+                    ctx.strokeStyle = i % 5 ? "yellow" : "#fff";
+                    ctx.stroke();
+                    ctx.closePath();
+                    ctx.restore();
+                }
+                ctx.restore();
+            }
+
+            // 绘制表针
+
+        </script>
+</body>
+</html>

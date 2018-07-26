@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="600" style='background:#000'></canvas>
+    <script>
+        // 事件触发原理就是： 监测鼠标下，y坐标在当前那个路径下，执行相应的函数
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+
+        var r = canvas.width / 4;
+
+        ctx.beginPath();
+        ctx.arc(r, r, r, 0, Math.PI * 1);
+        ctx.fillStyle = '#2196f3'; //蓝色
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(r, r, r, Math.PI * 1, Math.PI * 2);
+        ctx.fillStyle = '#f44336'; //红色
+        ctx.fill();
+
+        function isInPath (x, y){
+            ctx.beginPath();
+            ctx.arc(r, r, r, 0, Math.PI * 1);
+            // 按下鼠标判断鼠标位置是否在圆上，当画布上有多个路径时，isPointInPath只能判断最后那一个绘制的路径
+            return ctx.isPointInPath(x, y);
+        }
+
+        canvas.addEventListener('click', function(e){
+            if(isInPath(e.offsetX, e.offsetY)) {
+                console.log('hello')
+            }
+        })
+    </script>
+</body>
+</html>

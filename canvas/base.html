@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="600" style='background:#000'> 你的浏览器不支持canvas,请升级你的浏览器</canvas>
+    <canvas id="_canvas" width="600" height="600" style='background:#000'> 你的浏览器不支持canvas,请升级你的浏览器</canvas>
+    <script>
+        // 画弧
+         function paintArc(ctx){
+             ctx.beginPath();
+             ctx.arc(150, 150, 40, 0, Math.PI / 2, false); // radians=(Math.PI/180)*degrees 
+             ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+             ctx.closePath();
+             ctx.stroke();
+             ctx.fill();
+         }
+         
+         // 控制点画弧
+         function bas(ctx){
+            ctx.beginPath();
+            ctx.moveTo(50, 50);
+            //参数1、2：控制点1坐标   参数3、4：控制点2坐标  参数4：圆弧半径
+            ctx.arcTo(200, 50, 200, 200, 100);
+            ctx.lineTo(200, 200)
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.rect(50, 50, 10, 10); // h
+            ctx.rect(200, 50, 10, 10)
+            ctx.rect(200, 200, 10, 10)
+            ctx.fill()
+         }
+         
+         // 二级贝塞尔曲线
+         function quadraticCurveTo(ctx){
+            ctx.beginPath();
+            ctx.moveTo(10, 200); //起始点
+            var cp1x = 40, cp1y = 100;  //控制点
+            var x = 200, y = 200; // 结束点
+            //绘制二次贝塞尔曲线
+            ctx.quadraticCurveTo(cp1x, cp1y, x, y);
+            ctx.stroke();
+         }
+
+         // 三级贝塞尔曲线
+         function bezierCurveTo(ctx){
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.moveTo(40, 200); //起始点
+            var cp1x = 20, cp1y = 100;  //控制点1
+            var cp2x = 100, cp2y = 120;  //控制点2
+            var x = 300, y = 300; // 结束点
+            //绘制二次贝塞尔曲线
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+            ctx.stroke();
+         }
+         
+         // 边框样式
+         function drawLine(ctx){
+            ctx.setLineDash([40, 160]);  // [实线长度, 间隙长度]  setLineDash 方法接受一个数组，来指定线段与间隙的交替
+            ctx.lineDashOffset = 20;  // lineDashOffset属性设置起始偏移量.
+            ctx.strokeRect(10, 250, 200, 200);
+         }
+
+         // 文字
+         function drawText(ctx){
+            ctx.font = "30px";
+            ctx.fillText("1", 10, 100);
+            ctx.strokeText("1", 10, 200)
+         }
+
+         // 绘制图片
+         function drawImgae(ctx){
+             return new Promise((reslove, reject)=>{
+                let img = new Image();   // 创建img元素
+                img.onload = function(){
+                    ctx.drawImage(img, 300, 100, 200, 100);
+                    reslove(img);
+                }
+                img.src = 'https://www.baidu.com/img/baidu_jgylogo3.gif'; // 设置图片源地址
+             })
+         }
+
+         // 切片
+         function sliceImage(ctx, img){
+            ctx.drawImage(img, 0, 0, 50, 50, 20, 20, 90, 80); // drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+            // dx和dy是image在canvas中定位的坐标值；dw和dh是image在canvas中即将绘制区域（相对dx和dy坐标的偏移量）的宽度和高度值；
+            // sx和sy是image所要绘制的起始位置，sw和sh是image所要绘制区域（相对image的sx和sy坐标的偏移量）的宽度和高度值
+         }
+
+         function draw(){
+            var canvas = document.getElementById('canvas');
+            if(!canvas.getContext) return;
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "rgb(200,0,0)";
+            //绘制矩形
+            ctx.fillRect (10, 10, 55, 50);
+
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect (30, 30, 55, 50);
+            
+            // 清除某个区域
+            ctx.clearRect(20, 20, 20, 30);
+            
+            // 画弧
+            paintArc(ctx);
+
+            bas(ctx);
+
+            quadraticCurveTo(ctx);
+
+            bezierCurveTo(ctx);
+
+            drawLine(ctx);
+
+            drawText(ctx);
+
+            drawImgae(ctx).then(img=>{
+                sliceImage(ctx, img);
+            });
+
+        }
+        draw();
+    </script>
+    <script>
+        // -> save restore状态的保存和恢复
+        // 1.当前应用的变形（即移动，旋转和缩放）
+
+        // 2.strokeStyle, fillStyle, globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, globalCompositeOperation 的值
+
+        // 3.当前的裁切路径（clipping path）
+        function _draw(){
+            let canvas = document.getElementById('_canvas');
+            if (!canvas.getContext) return;
+            let ctx = canvas.getContext("2d");
+
+            ctx.fillRect(0, 0, 150, 150);   // 使用默认设置绘制一个矩形
+            ctx.save();                  // 保存默认状态
+
+            ctx.fillStyle = 'red'       // 在原有配置基础上对颜色做改变
+            ctx.fillRect(15, 15, 120, 120); // 使用新的设置绘制一个矩形
+
+            ctx.save();                  // 保存当前状态
+            ctx.fillStyle = '#FFF'       // 再次改变颜色配置
+            ctx.fillRect(30, 30, 90, 90);   // 使用新的配置绘制一个矩形
+
+            ctx.restore();               // 重新加载之前的颜色状态 -》又变回红色
+            ctx.fillRect(45, 45, 60, 60);   // 使用上一次的配置绘制一个矩形
+
+            ctx.restore();               // 加载默认颜色配置 -》 又变回默认色
+            ctx.fillRect(60, 60, 30, 30);   // 使用加载的配置绘制一个矩形
+
+            translate(ctx);
+
+            clip(ctx);
+        }
+        
+        // 平移
+        function translate(ctx){
+            ctx.strokeStyle ='#fff';
+            ctx.fillStyle = '#fff';
+            ctx.save(); //保存坐原点平移之前的状态
+            ctx.translate(100, 100);
+            ctx.strokeRect(0, 0, 100, 100)
+            ctx.restore(); //恢复到最初状态
+            ctx.translate(220, 220);
+            ctx.rotate(Math.PI / 180 * 45); // 旋转45度
+            ctx.fillRect(0, 0, 100, 100);
+            ctx.restore(); //恢复到最初状态
+            
+        }
+
+        // 旋转
+        function clip(ctx){
+            ctx.beginPath();
+            ctx.arc(20,20, 80, 0, Math.PI * 2);
+            ctx.clip();
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(20, 20, 100,100);
+        }
+
+        _draw();
+    </script>
+</body>
+</html>
