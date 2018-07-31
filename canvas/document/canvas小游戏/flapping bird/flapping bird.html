@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas height="600" width="800"></canvas>
+    <script src="./myjs/sky.js"></script>
+    <script src="./myjs/bird.js"></script>
+    <script src="./myjs/land.js"></script>
+    <script src="./myjs/pipe.js"></script>
+    <script>
+        var cas = document.querySelector("canvas");
+        var ctx = cas.getContext("2d");
+        //算时间差的
+        var startTime = new Date();
+        var endTime = new Date();
+        var offsetTime = 0;
+        /*游戏开始时间*/
+        var gameStart = new Date();
+        /*游戏结束时间*/
+        var gameOver = 0;
+        //调用同时加载多张图片的函数
+        loadImg(['birds', 'sky', 'land', 'pipe1', 'pipe2'], function (imgList) {
+            var birdImg = imgList.birds;
+            var skyImg = imgList.sky;
+            var landImg = imgList.land;
+            var bottomImg = imgList.pipe1;
+            var topImg = imgList.pipe2;
+            //创建天空对象
+            var sky1 = new Sky({
+                ctx: ctx,
+                skyImg: skyImg,
+                x: 0,
+                y: 0
+            })
+            var sky2 = new Sky({
+                ctx: ctx,
+                skyImg: skyImg,
+                x: skyImg.width,
+                y: 0
+            })
+            /*创建小鸟对象*/
+            var bird = new Bird({
+                ctx: ctx,
+                birdImg: birdImg,
+                birdX: 100,
+                birdY: 100
+            })
+            //创建陆地对象
+            var landArr = [];
+            for (var i = 0; i < 4; i++) {
+                var land = new Land({
+                    ctx: ctx,
+                    landImg: landImg,
+                    landX: landImg.width * i,
+                    landY: skyImg.height - landImg.height
+                })
+                landArr.push(land);
+            }
+            /*创建管道*/
+            var pipeArr = [];
+            for (var i = 0; i < 6; i++) {
+                var p = new Pipe({
+                    ctx: ctx,
+                    topImg: topImg,
+                    bottomImg: bottomImg,
+                    pipeX: 300 + 3 * topImg.width * i,
+                })
+                pipeArr.push(p);
+            }
+
+            fly();
+            cas.onclick = function () {
+                bird.birdSpeed = -0.21;
+            }
+            //鸟飞的函数
+            function fly() {
+                endTime = new Date();
+                offsetTime = endTime - startTime;
+                startTime = endTime;
+
+                ctx.beginPath();
+                //清除画布
+                ctx.clearRect(0, 0, cas.width, cas.height);
+                /*绘制天空背景*/
+                sky1.drawSky();
+                sky2.drawSky();
+                /*绘制小鸟*/
+                bird.drawBird(offsetTime);
+                /*绘制管道*/
+                for (var i = 0; i < pipeArr.length; i++) {
+                    pipeArr[i].drawPipe();
+                }
+                //描绘陆地
+                for (var i = 0; i < landArr.length; i++) {
+                    landArr[i].drawLand();
+                }
+                /*添加文本显示*/
+                gameOver = new Date();
+                var offset = gameOver - gameStart;
+                offset = offset / 1000;
+                var hour = Math.floor(offset / 3600);
+                var minute = Math.floor(offset % 3600 / 60);
+                var second = Math.floor(offset % 60);
+                var str = "你已经坚持游戏：" + hour + "时" + minute + "分" + second + "秒";
+                ctx.textBaseline = "top";
+                ctx.font = "20px 黑体";
+                ctx.fillText(str, 100, 0);
+                //判断小鸟是否到达天地
+                console.log(bird.birdY);
+                if (bird.birdY + bird.birdH / 2 < 0 || bird.birdY > cas.height - landImg.height - birdImg.height) {
+                    return;
+                }
+                /*判断小鸟是否撞上了管道*/
+                console.log(bird.canvasY + bird.birdH / 2);
+                if (ctx.isPointInPath(bird.birdX + bird.birdW / 2, bird.birdY + bird.birdH / 2)) {
+                    return;
+                }
+
+                window.requestAnimationFrame(fly);
+            }
+        })
+
+        //同时加载多张图片的函数
+        function loadImg(arr, callback) {
+            var count = 0;
+            var imgList = {};
+            for (var i = 0; i < arr.length; i++) {
+                var img = new Image();
+                img.src = './images/' + arr[i] + '.png';
+                imgList[arr[i]] = img;
+                img.onload = function () {
+                    count++;
+                    if (count == arr.length) {
+                        callback(imgList);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
